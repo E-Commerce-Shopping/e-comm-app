@@ -1,0 +1,100 @@
+.login-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+}
+
+h2 {
+    text-decoration: underline;
+}
+
+p {
+    line-height: 30%;
+}
+
+.forgot-pass {
+    cursor: pointer;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: center;
+    justify-content: center;
+    width: 35vw; 
+    margin-top: 30px;
+}
+
+.link {
+    color: black;
+}
+
+.link:hover {
+    color: black;
+    text-decoration: underline;
+}
+
+label {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.input-field {
+    padding: 6px 14px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.input-wp {
+    display: flex;
+    flex-direction: column;
+    width: 100%
+}
+
+.submit-btn {
+    width: 100%;
+}
+
+strong {
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 1200px) {
+    .input-wp {
+        width: 75%;
+    }
+
+    .submit-btn {
+        width: 75%;
+    }
+}
+
+@media only screen and (max-width: 1050px) {
+    .input-wp {
+        width: 90%;
+    }
+
+    .submit-btn {
+        width: 90%;
+    }
+
+    .login-container {
+        height: auto;
+    }
+}
+
+@media only screen and(max-width: 990px) {
+    .input-wp {
+        width: 60%;
+    }
+
+    .submit-btn {
+        width: 60%;
+    }
+}
