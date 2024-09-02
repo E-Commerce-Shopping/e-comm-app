@@ -1,10 +1,16 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+import Tick from '../assets/check-mark.png';
+import Hidden from '../assets/hidden.png';
+import Eye from '../assets/eye.png';
 
 const SignUp = ({showLogin}) => {
     const [input, setInput] = useState({name: '', email:'', phone: '', password: '', cpassword: ''});
     const [error, setError] = useState({});
-    const [submit, setSubmit] = useState(false)
+    const [submit, setSubmit] = useState(false);
+    const [showsPass, setShowPass] = useState(false);
+    const [cshowsPass, setCshowPass] = useState(false)
+    const navigate = useNavigate();
 
 
 
@@ -23,31 +29,62 @@ const SignUp = ({showLogin}) => {
     }
 
     const validations = () => {
-        let tempErrors = {};
+       let tempErrors = {};
+       let isValid = true;
       //  if(!input.name) tempErrors.name = 'enter your name';
         if(input.name.length<2) tempErrors.name = 'name should have more than 2 characters';
        // if(input.phone.length<10 || input.phone.length>11) tempErrors.phone = 'phone number must contain 10 numbers';
     
-        if(input.password.length<8) tempErrors.password = 'password must contain atleast 8 characters';
-        if(input.password !== input.cpassword) tempErrors.cpassword = 'password is not matching';
+       else if(input.password.length<8) tempErrors.password = 'password must contain atleast 8 characters';
         
-        setError(tempErrors);
+      else  if(input.password !== input.cpassword) tempErrors.cpassword = 'password is not matching';
+
+    const checkNumber = input.password.split('').filter((i) => !isNaN(i) && i !== ' ');
+
+if (checkNumber.length < 4) {
+  tempErrors.Numbers = 'Password must contain at least 4 numbers';
+}
+
+const checkChars = input.password.split('').filter((i)=> i.match(/[a-zA-Z]/))
+
+if(checkChars.length<2 ) {
+  tempErrors.letters = 'Password must contain at least 2 characters';
+}
+
+const specialChars = '!@#$%^&*()_+[]{}|;:,.<>?';
+
+const checkSpecialChars = input.password.split('').filter((i) => specialChars.includes(i));
+
+if (checkSpecialChars.length < 1) {
+  tempErrors.specialChars = 'Password must contain at least one special character';
+}
+        
+       setError(tempErrors);
+       return Object.keys(tempErrors).length === 0;
+      
       }
+
+
+      const showPass = () => {
+        setShowPass(!showsPass);
+      }
+
+      const CshowPass = () => {
+        setCshowPass(!cshowsPass)
+      }
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         if(validations()) {
             alert('form submitted');
+            setSubmit(true);
+
+            setTimeout(() => {
+               navigate('/');
+            }, 3000);
         }
-
-        setSubmit(true);
-
-        setTimeout(() => {
-            return <Redirect to={'/'} />
-        }, 3000);
-        
-        
     }
 
 
@@ -103,7 +140,7 @@ const SignUp = ({showLogin}) => {
          <div className="input-wp">
           <label>Password*</label>
           <input
-            type="password"
+            type={showsPass ? "text" : 'password'}
             placeholder="enter a your password.."
             className="input-field"
             name="password"
@@ -112,7 +149,14 @@ const SignUp = ({showLogin}) => {
             required
           />
 
+{!showsPass && <img src={Hidden} alt='hidden-eye' className='password-icon' onClick={showPass} />}
+{showsPass && <img src={Eye} alt='eye' className='password-icon-eye' onClick={showPass} />}
+
           {error.password && <span className="text-danger">{error.password}</span>}
+          {error.Numbers && <span className="text-danger">{error.Numbers}</span>}
+          {error.letters && <span className="text-danger">{error.letters}</span>}
+          
+          {error.specialChars && <span className="text-danger">{error.specialChars}</span>}
           
          
         </div> 
@@ -121,7 +165,7 @@ const SignUp = ({showLogin}) => {
           <div className="input-wp">
             <label>Confirm Password*</label>
             <input
-              type="password"
+              type={cshowsPass ? "text" : 'password'}
               placeholder="confirm your password.."
               className="input-field"
               name="cpassword"
@@ -130,12 +174,16 @@ const SignUp = ({showLogin}) => {
               required
             />
 
+            {!cshowsPass && <img src={Hidden} alt='hidden-eye' className='password-icon' onClick={CshowPass} />}
+           {cshowsPass && <img src={Eye} alt='eye' className='password-icon-eye' onClick={CshowPass} />}
+
             {error.cpassword && <span className="text-danger">{error.cpassword}</span>}
           </div>
+         { !submit && <button className='btn btn-dark submit-btn mt-3' type='submit'>SignUp</button> }
+ {submit&& <> <p className='text-success text-bold success-msg'> Account Created!</p>
 
-{/* {submit&& <p className='text-success'> Account Created!</p>} */}
-<button className='btn btn-dark submit-btn mt-3' type='submit'>SignUp</button> 
-<p>Don't have an account? <Link to='/' className="link"> <strong>Login</strong> </Link> </p>
+<img src={Tick} alt='success-message' className='success-tick'/> </>} 
+{!submit && <p>Don't have an account? <Link to='/' className="link"> <strong>Login</strong> </Link> </p>}
       </form>
     </div>
   )

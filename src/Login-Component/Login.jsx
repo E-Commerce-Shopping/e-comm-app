@@ -126,7 +126,7 @@ const inputRef = useRef(null);
         
          {!forgotpass && <p>
             Don't have an account?
-           <Link className="link" to='/signup'><strong>SignUp</strong></Link> 
+           <Link className="link" to='/signup'> <strong>SignUp</strong></Link> 
           </p>}
         
 
