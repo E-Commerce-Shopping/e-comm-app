@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./Login.css";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Login = () => {
   //const [Login, setLogin] = useState(false);
@@ -11,6 +12,7 @@ const Login = () => {
     password: '',
   });
 const inputRef = useRef(null);
+const [exception, setException] = useState(null);
 
   const handleChange = (e)=> {
     
@@ -26,14 +28,36 @@ const inputRef = useRef(null);
   const validations = () => {
     let tempErrors = {};
   //  if(!input.name) tempErrors.name = 'enter your name';
-    if(input.name.length<2) tempErrors.name = 'name should have more than 2 characters';
+    //if(input.name.length<2) tempErrors.name = 'name should have more than 2 characters';
    // if(input.phone.length<10 || input.phone.length>11) tempErrors.phone = 'phone number must contain 10 numbers';
 
     if(input.password.length<8) tempErrors.password = 'password must contain atleast 8 characters';
     // if(input.password !== input.cpassword) tempErrors.cpassword = 'password is not matching';
+
+    const checkNumber = input.password.split('').filter((i) => !isNaN(i) && i !== ' ');
+
+if (checkNumber.length < 4) {
+  tempErrors.Numbers = 'Password must contain at least 4 numbers';
+}
+
+const checkChars = input.password.split('').filter((i)=> i.match(/[a-zA-Z]/))
+
+if(checkChars.length<2 ) {
+  tempErrors.letters = 'Password must contain at least 2 characters';
+}
+
+const specialChars = '!@#$%^&*()_+[]{}|;:,.<>?';
+
+const checkSpecialChars = input.password.split('').filter((i) => specialChars.includes(i));
+
+if (checkSpecialChars.length < 1) {
+  tempErrors.specialChars = 'Password must contain at least one special character';
+}
+        
+       setError(tempErrors);
+       return Object.keys(tempErrors).length === 0;
     
-    setError(tempErrors);
-  }
+}
 
 //   const handleSignUpClick = () => {
 //     setLogin((login)=>!login);
@@ -57,19 +81,32 @@ const inputRef = useRef(null);
 //   }, []);
 
 
-  const handleSubmit = (e)=> {
+const postData = async () => {
+  try {
+    const details = await axios.post('https://localhost:8080/login', input);
+    console.log(details);
+    setException(null);
+  } catch(err) {
+    setException(err);
+    console.log(err);
+  }
+  
+}
+
+
+  const handleSubmit = async (e)=> {
     e.preventDefault();
     
 
     if(validations()) {
-        console.log('form submitted');
+        alert('form submitted');
         setInput({
-            name:' ',
             email: '',
-            phone: '',
             password: '',
-            cpassword:'',
-            })
+            });
+
+           postData();
+
     }
    // alert('form submitted')
 
@@ -111,6 +148,9 @@ const inputRef = useRef(null);
           />
 
           {error.password && <span className="text-danger">{error.password}</span>}
+          {error.Numbers && <span className="text-danger">{error.Numbers}</span>}
+          {error.letters && <span className="text-danger">{error.letters}</span>}
+          {error.specialChars && <span className="text-danger">{error.specialChars}</span>}
           <span className="text-primary forgot-pass" onClick={handleForgotPass}>Forgot Password? </span>
          
         </div> }
