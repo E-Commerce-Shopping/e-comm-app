@@ -9,7 +9,8 @@ const SignUp = ({showLogin}) => {
     const [error, setError] = useState({});
     const [submit, setSubmit] = useState(false);
     const [showsPass, setShowPass] = useState(false);
-    const [cshowsPass, setCshowPass] = useState(false)
+    const [cshowsPass, setCshowPass] = useState(false);
+    const[exception, setException] = useState(null);
     const navigate = useNavigate();
 
 
@@ -74,16 +75,31 @@ if (checkSpecialChars.length < 1) {
       }
 
 
+      const postData = async () =>{
+        try {
+          const res = await axios.post('https://localhost:8080/signup', input);
+        console.log(res);
+        setException(null)
+        } catch(err) {
+          console.log(err);
+          setException(err);
+        }
+      }
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
         if(validations()) {
             alert('form submitted');
             setSubmit(true);
+            
+            postData();
 
             setTimeout(() => {
                navigate('/');
             }, 3000);
+
+
         }
     }
 

@@ -21,9 +21,10 @@ const [exception, setException] = useState(null);
     }  else if(e.target.name === 'password') {
         setInput({...input, password: e.target.value})
     }
-   
   }
 
+
+  //login input fields validations.
 
   const validations = () => {
     let tempErrors = {};
@@ -69,8 +70,23 @@ if (checkSpecialChars.length < 1) {
     inputRef.current.focus();
   }
 
+//posting forgotpassword verfication email to API
+const postEmail = async ()=> {
+  try {
+    const detail = await axios.post('https://localhost:8080/forgotpassword', input.email);
+  console.log(detail);
+  setException(null);
+  } catch(err) {
+    console.log(err);
+    setException(err);
+  }
+}
+
+//handling forgot password
   const handleSendOTP = () => {
     alert('OTP has been sent to your email');
+    setInput({email: '', password: ''});
+    postEmail();
   }
 
 //   useEffect(()=>{
@@ -81,6 +97,8 @@ if (checkSpecialChars.length < 1) {
 //   }, []);
 
 
+
+//posting login details to API
 const postData = async () => {
   try {
     const details = await axios.post('https://localhost:8080/login', input);
@@ -94,6 +112,7 @@ const postData = async () => {
 }
 
 
+//handling login submit
   const handleSubmit = async (e)=> {
     e.preventDefault();
     
@@ -118,7 +137,7 @@ const postData = async () => {
     <div className="login-container w-100">
       <h2>{forgotpass ? 'Forgot Password!' : 'Login'}</h2>
 
-      <form onSubmit={handleSubmit}>
+      {!forgotpass &&  <form onSubmit={handleSubmit}>
        
         <div className="input-wp">
           <label> User Name*</label>
@@ -135,7 +154,7 @@ const postData = async () => {
         </div>
 
        
-       {!forgotpass &&  <div className="input-wp">
+        <div className="input-wp">
           <label>Password*</label>
           <input
             type="password"
@@ -153,7 +172,7 @@ const postData = async () => {
           {error.specialChars && <span className="text-danger">{error.specialChars}</span>}
           <span className="text-primary forgot-pass" onClick={handleForgotPass}>Forgot Password? </span>
          
-        </div> }
+        </div> 
 
     
 
@@ -172,7 +191,30 @@ const postData = async () => {
 
 
         {/* {Login && <span>Feedback</span>} */}
+      </form> }
+
+      { forgotpass && <form onSubmit={handleSendOTP}>
+        <div className="input-wp">
+          <label> User Name*</label>
+          <input
+            type="email"
+            placeholder="enter your email.."
+            className="input-field"
+            ref={inputRef}
+            name="email"
+            value={input.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+
+        <button className="submit-btn btn-dark mt-3"> Send OTP </button>
       </form>
+
+      }
+
+
     </div>
   );
 };
